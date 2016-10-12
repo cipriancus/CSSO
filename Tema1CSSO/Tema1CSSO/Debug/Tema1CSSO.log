@@ -1,3 +1,6 @@
 ﻿  Source.cpp
-  Tema1CSSO.vcxproj -> C:\Users\Ciprian\documents\visual studio 2015\Projects\Tema1CSSO\Debug\Tema1CSSO.exe
-  Tema1CSSO.vcxproj -> C:\Users\Ciprian\documents\visual studio 2015\Projects\Tema1CSSO\Debug\Tema1CSSO.pdb (Full PDB)
+c:\users\ciprian\documents\github\csso\tema1csso\tema1csso\source.cpp(27): warning C4018: '<': signed/unsigned mismatch
+c:\users\ciprian\documents\github\csso\tema1csso\tema1csso\source.cpp(109): warning C4307: '+': integral constant overflow
+c:\users\ciprian\documents\github\csso\tema1csso\tema1csso\source.cpp(41): warning C4172: returning address of local variable or temporary: new_path
+  Tema1CSSO.vcxproj -> C:\Users\Ciprian\Documents\GitHub\CSSO\Tema1CSSO\Debug\Tema1CSSO.exe
+  Tema1CSSO.vcxproj -> C:\Users\Ciprian\Documents\GitHub\CSSO\Tema1CSSO\Debug\Tema1CSSO.pdb (Full PDB)
