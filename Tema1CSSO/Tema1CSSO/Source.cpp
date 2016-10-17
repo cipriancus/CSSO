@@ -48,7 +48,7 @@ boolean createRegEntryFolder(const wchar_t *path) {
 
 	if (RegCreateKeyEx(HKEY_CURRENT_USER, npath, 0, 0, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hkey, NULL) ==0)
 		return true;
-
+	RegCloseKey(hkey);//
 	return false;
 }
 
@@ -65,6 +65,7 @@ boolean createRegEntryFile(const wchar_t *path,const wchar_t *fileName,const BYT
 			return true;
 		return false;
 	}
+	RegCloseKey(hkey);//
 	return false;
 }
 
@@ -87,40 +88,36 @@ boolean parseFolder(const wchar_t *path) {
 					wstring newpath = wstring(path).substr(0, wstring(path).length() - 1) + wstring(ffd.cFileName) + L"\\*";
 					//daca esueaza un folder ne oprim
 					if (createRegEntryFolder(newpath.c_str()) == false) {
-						cout << "Path-ul " << newpath.c_str() << " a esuat" << endl;
-						return false;
+						cout << "Path-ul " << _TEXT("%s",newpath.c_str())<< " a esuat" << endl;
+						wcout << newpath.c_str();
+						goto _exit;
 					}
 
 					//daca esueaza un path ne oprim
 					if (parseFolder(newpath.c_str()) == false) {
-						cout << "Path-ul " << newpath.c_str() << " a esuat" << endl;
-						return false;
+						cout << "Path-ul " << _TEXT("%s", newpath.c_str()) << " a esuat" << endl;
+						wcout << newpath.c_str();
+						goto _exit;
 					}
 
 				}
 				else
 				{
-
-					/*LARGE_INTEGER filesize;
-
-					filesize.LowPart = ffd.nFileSizeLow;
-					filesize.HighPart = ffd.nFileSizeHigh;
-
-					(BYTE)(filesize.QuadPart*(MAXDWORD + 1))*/
-
+					//const BYTE* fileBYTE = new BYTE();
 
 					//daca esueaza un file ne oprim
-					if (createRegEntryFile(newpath.c_str(), wstring(ffd.cFileName).c_str(), ) == false) {
-						cout << "Path-ul " << newpath.c_str() << " a esuat" << endl;
-						return false;
+					if (createRegEntryFile(newpath.c_str(), wstring(ffd.cFileName).c_str(), (const BYTE*)&ffd.nFileSizeLow) == false) {
+						cout << "Path-ul " << _TEXT("%s", newpath.c_str()) << " a esuat" << endl;
+						wcout << newpath.c_str();
+						goto _exit;
 					}
 
 				}
 			} while (FindNextFile(handle, &ffd) != 0);
-			//CloseHandle(handle);
 			return true;
 		}
 	}
+	_exit:
 	CloseHandle(handle);
 	return false;
 }
