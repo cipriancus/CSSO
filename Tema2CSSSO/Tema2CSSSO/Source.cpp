@@ -5,7 +5,7 @@
 #include <wchar.h>
 using namespace std;
 
-#define BUFFER_SIZE 500000000
+#define FILESIZE 1000000
 
 wchar_t *convertCharArrayToLPCWSTR(const char* charArray)
 {
@@ -14,31 +14,48 @@ wchar_t *convertCharArrayToLPCWSTR(const char* charArray)
 	return wString;
 }
 
-boolean write_in_page(LPCTSTR  newFILEbuffer,PROCESSENTRY32 pe32) {
-	/*
-		pe32.szExeFile 
-		pe32.th32ProcessID
-		pe32.th32ParentProcessID*/
-
-		//afisez pid-ul si executabilul
-		printf("Process [%d]: ", pe32.th32ProcessID);
-		wcout << pe32.th32ParentProcessID<<" ";
-		wcout<<pe32.szExeFile<<endl<<endl;
-
-		TCHAR newChar[1000];
-		_itow(pe32.th32ProcessID, newChar, 10);
-		lstrcatW(newChar, L" ");
-		lstrcatW(newChar, _itow(pe32.th32ParentProcessID, newChar, 10));
-		lstrcatW(newChar, L" ");
-		lstrcatW(newChar, pe32.szExeFile);
-		lstrcatW(newChar, L"\n");
-
-		CopyMemory((PVOID)newFILEbuffer, newChar, (lstrlenW(newChar) * sizeof(TCHAR)));
-
-		//UnmapViewOfFile(newFILEbuffer);
+boolean write_in_page(LPCTSTR  newFILEbuffer,const wchar_t* newChar) {
+		CopyMemory((PVOID)newFILEbuffer, newChar, (lstrlenW(newChar))*sizeof(wchar_t));
 		return true;
 }
 
+
+//inchide handle-uri
+boolean createTREE(HANDLE createNewFile) {
+	HANDLE processToken;
+
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &processToken) == false) {
+		CloseHandle(processToken);
+		return false;
+	}
+
+	LUID privilegeID;
+
+	if (LookupPrivilegeValueW(NULL,SE_DEBUG_NAME, &privilegeID)==false) {
+		return false;
+	}
+
+	TOKEN_PRIVILEGES newPrivileges;
+	newPrivileges.PrivilegeCount = 1;
+	newPrivileges.Privileges[0].Luid = privilegeID;
+
+	if (AdjustTokenPrivileges(processToken,false,&newPrivileges,sizeof(TOKEN_PRIVILEGES),NULL,0)==false) {
+		cout << GetLastError();
+		return false;
+	}
+
+
+	return true;
+}
+
+/*
+LPCTSTR  newFILEbuffer = (LPTSTR)OpenFileMapping(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+
+if (newFILEbuffer == NULL)
+{
+return false;
+}
+*/
 
 int main() {
 
@@ -55,48 +72,99 @@ int main() {
 		return(-1);
 	}
 
+
 	//initializez dwSize cu dimensiunea structurii.
 	pe32.dwSize = sizeof(PROCESSENTRY32);
+
 
 	//obtin informatii despre primul proces
 	if (!Process32First(hProcessSnap, &pe32))
 	{
 		printf("Process32First failed. err = %d \n", GetLastError());
-		CloseHandle(hProcessSnap); //inchidem snapshot-ul
+		CloseHandle(hProcessSnap); 
 		return(-1);
 	}
 
+	/*
+	dwMaximumSizeHigh
+	[in] Specifies the high order 32 bits of the maximum size of the file-mapping object.
+	If you intend to grow the file, specify the maximum file size so that the kernel can reserve the correct amount of memory.
+
+	dwMaximumSizeLow
+	[in] Specifies the low order 32 bits of the maximum size of the file-mapping object. If this parameter and
+	dwMaximumSizeHigh are set to zero, the maximum size of the file-mapping object is equal to the current size of the file specified by hFile.
+	If dwMaximumSizeLow is set to zero, the function returns an error that indicates an invalid parameter.*/
 
 	//creem pagina
-	HANDLE createNewFile = CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0,BUFFER_SIZE,L"PaginaNouaTema2");
+	HANDLE createNewFile = CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE,0, FILESIZE,L"PaginaNouaTema2");
 
 	if (createNewFile == NULL)
 	{
 		printf("Could not create file mapping object (%d).\n",GetLastError());
 		CloseHandle(createNewFile);
+		CloseHandle(hProcessSnap);
+		cout << GetLastError();
 		return (-1);
 	}
 
-	LPCTSTR  newFILEbuffer = (LPTSTR)MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, BUFFER_SIZE);
+	LPCTSTR  newFILEbuffer = (LPTSTR)MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
 	if (newFILEbuffer == NULL)
 	{
 		printf("Could not map view of file (%d).\n",GetLastError());
 		CloseHandle(createNewFile);
+		CloseHandle(hProcessSnap);
+		UnmapViewOfFile(newFILEbuffer);
 		return (-1);
 	}
 
-
+	wstring string;
 	do
 	{
-		if (write_in_page(newFILEbuffer,pe32) == false) {
-			printf("Opperation failed %d", GetLastError());
-			CloseHandle(hProcessSnap); //inchidem snapshot-ul
-			return(-1);
-		}
-	
-	} while (Process32Next(hProcessSnap, &pe32)); //trec la urmatorul proces
+		TCHAR newChar[10000]=L"<";
+		TCHAR newPID[100];
 
+
+		_itow(pe32.th32ProcessID, newPID, 10);
+		lstrcatW(newChar, newPID);
+		lstrcatW(newChar, L">");
+
+
+		lstrcatW(newChar, L"<");
+		_itow(pe32.th32ParentProcessID, newPID, 10);
+		lstrcatW(newChar, newPID);
+		lstrcatW(newChar, L">");
+
+
+		lstrcatW(newChar, L"<");
+		lstrcatW(newChar, pe32.szExeFile);
+		lstrcatW(newChar, L">");
+
+		lstrcatW(newChar, L"\n");
+		
+		string = string + wstring(newChar);
+	} while (Process32Next(hProcessSnap, &pe32));
+
+	if (write_in_page(newFILEbuffer, string.c_str()) == false) {
+		printf("Opperation failed %d", GetLastError());
+		UnmapViewOfFile(newFILEbuffer);
+		CloseHandle(createNewFile);
+		CloseHandle(hProcessSnap); 
+		return(-1);
+	}
+
+
+	if (createTREE(createNewFile)== false) {
+		printf("Opperation failed %d", GetLastError());
+		UnmapViewOfFile(newFILEbuffer);
+		CloseHandle(createNewFile);
+		CloseHandle(hProcessSnap); 
+		return(-1);
+	}
+
+	cout << "Successful opperation" << endl;
+
+	CloseHandle(createNewFile);
 	UnmapViewOfFile(newFILEbuffer);
 	CloseHandle(hProcessSnap);
 	system("pause");
