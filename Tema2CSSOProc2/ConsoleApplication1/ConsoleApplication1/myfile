@@ -1,0 +1,215 @@
+[arborele 0]
+<0><0><[System Process]>
+ <4><0><System>
+  <296><4><smss.exe>
+
+
+
+[arborele 1]
+<420><392><csrss.exe>
+
+[arborele 2]
+<524><392><wininit.exe>
+ <580><524><services.exe>
+  <664><580><svchost.exe>
+   <2660><664><unsecapp.exe>
+
+   <2764><664><WmiPrvSE.exe>
+
+   <2344><664><WmiPrvSE.exe>
+
+   <4392><664><SkyDrive.exe>
+
+   <5172><664><SettingSyncHost.exe>
+
+
+  <696><580><svchost.exe>
+
+  <912><580><ekrn.exe>
+   <3792><912><egui.exe>
+
+
+  <996><580><nvvsvc.exe>
+   <80><996><nvxdsync.exe>
+
+   <256><996><nvvsvc.exe>
+
+
+  <272><580><svchost.exe>
+   <6492><272><audiodg.exe>
+
+
+  <428><580><svchost.exe>
+   <1416><428><wlanext.exe>
+    <1444><1416><conhost.exe>
+
+
+   <1848><428><dasHost.exe>
+
+   <4608><428><WUDFHost.exe>
+
+
+  <396><580><svchost.exe>
+   <3772><396><taskhostex.exe>
+
+   <3780><396><SynTPEnh.exe>
+
+   <5448><396><Samsung Magician.exe>
+
+
+  <676><580><svchost.exe>
+
+  <1044><580><igfxCUIService.exe>
+
+  <1268><580><svchost.exe>
+
+  <1524><580><spoolsv.exe>
+
+  <1560><580><svchost.exe>
+
+  <1696><580><armsvc.exe>
+
+  <1712><580><AppleMobileDeviceService.exe>
+
+  <1728><580><mDNSResponder.exe>
+
+  <1760><580><CxAudMsg64.exe>
+
+  <1788><580><svchost.exe>
+
+  <1824><580><EvtEng.exe>
+
+  <1960><580><sqlservr.exe>
+
+  <2044><580><TNSLSNR.EXE>
+
+  <1772><580><RegSrvc.exe>
+
+  <1940><580><ReportingServicesService.exe>
+
+  <2172><580><SamsungRapidSvc.exe>
+
+  <2208><580><SASrv.exe>
+
+  <2248><580><sqlwriter.exe>
+
+  <2280><580><svchost.exe>
+
+  <2320><580><TeamViewer_Service.exe>
+
+  <2452><580><vmnat.exe>
+
+  <2500><580><ZeroConfigService.exe>
+
+  <2544><580><vmware-authd.exe>
+
+  <2704><580><vmnetdhcp.exe>
+
+  <2908><580><vmware-usbarbitrator64.exe>
+
+  <3024><580><vmware-hostd.exe>
+
+  <416><580><PresentationFontCache.exe>
+
+  <4192><580><svchost.exe>
+
+  <4356><580><fdlauncher.exe>
+   <4920><4356><fdhost.exe>
+    <4936><4920><conhost.exe>
+
+
+
+  <4456><580><svchost.exe>
+
+  <4564><580><SearchIndexer.exe>
+   <6332><4564><SearchProtocolHost.exe>
+
+   <9004><4564><SearchFilterHost.exe>
+
+
+  <7164><580><devmonsrv.exe>
+
+  <7084><580><obexsrv.exe>
+
+  <8084><580><StandardCollector.Service.exe>
+
+
+ <588><524><lsass.exe>
+
+
+[arborele 3]
+<532><516><csrss.exe>
+
+[arborele 4]
+<780><516><winlogon.exe>
+ <896><780><dwm.exe>
+
+
+[arborele 5]
+<4028><4020><explorer.exe>
+ <5876><4028><CAudioFilterAgent64.exe>
+
+ <5892><4028><fmapp.exe>
+
+ <5928><4028><NvBackend.exe>
+
+ <5972><4028><SamsungRapidApp.exe>
+
+ <6008><4028><SRSSSC.exe>
+
+ <6052><4028><googledrivesync.exe>
+  <6068><6052><googledrivesync.exe>
+
+
+ <7964><4028><devenv.exe>
+  <5708><7964><PerfWatson2.exe>
+
+  <8476><7964><Microsoft.Alm.Shared.Remoting.RemoteContainer.dll>
+
+  <5784><7964><vcpkgsrv.exe>
+
+  <8940><7964><MSBuild.exe>
+   <672><8940><conhost.exe>
+
+
+  <9036><7964><ScriptedSandbox64.exe>
+
+
+ <1460><4028><devenv.exe>
+  <2588><1460><PerfWatson2.exe>
+
+  <2792><1460><Microsoft.Alm.Shared.Remoting.RemoteContainer.dll>
+
+  <7092><1460><vcpkgsrv.exe>
+
+  <8128><1460><VsHub.exe>
+   <6768><8128><Microsoft.VsHub.Server.HttpHost.exe>
+    <7232><6768><conhost.exe>
+
+
+   <1072><8128><Microsoft.VsHub.Server.HttpHostx64.exe>
+    <8980><1072><conhost.exe>
+
+
+
+  <8252><1460><Tema2CSSSO.exe>
+   <2720><8252><conhost.exe>
+
+
+
+
+[arborele 6]
+<4504><4316><igfxEM.exe>
+
+[arborele 7]
+<4516><4316><igfxHK.exe>
+
+[arborele 8]
+<4524><4316><igfxTray.exe>
+
+[arborele 9]
+<5432><5356><SynTPHelper.exe>
+
+[arborele 10]
+<7808><3008><mspdbsrv.exe>
+

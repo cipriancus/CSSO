@@ -1,0 +1,14 @@
+﻿  Source.cpp
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(70): error C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(254): note: see declaration of 'wcstok'
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(81): error C4996: '_wcstok': This function or variable may be unsafe. Consider using wcstok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(240): note: see declaration of '_wcstok'
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(111): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(117): error C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(254): note: see declaration of 'wcstok'
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(130): error C4996: 'wcstok': wcstok has been changed to conform with the ISO C standard, adding an extra context parameter. To use the legacy Microsoft wcstok, define _CRT_NON_CONFORMING_WCSTOK.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstring.h(254): note: see declaration of 'wcstok'
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(205): error C4996: '_itow': This function or variable may be unsafe. Consider using _itow_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdlib.h(67): note: see declaration of '_itow'
+c:\users\ciprian\documents\github\csso\tema2cssso\tema2cssso\source.cpp(211): error C4996: '_itow': This function or variable may be unsafe. Consider using _itow_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\corecrt_wstdlib.h(67): note: see declaration of '_itow'

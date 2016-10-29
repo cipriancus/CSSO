@@ -2,7 +2,11 @@
 #include<stdio.h>
 #include<TlHelp32.h>
 #include<iostream>
+#include <tchar.h>
 #include <wchar.h>
+#include <string.h>
+#include<map>
+#include<fstream>
 using namespace std;
 
 #define FILESIZE 1000000
@@ -19,43 +23,6 @@ boolean write_in_page(LPCTSTR  newFILEbuffer,const wchar_t* newChar) {
 		return true;
 }
 
-
-//inchide handle-uri
-boolean createTREE(HANDLE createNewFile) {
-	HANDLE processToken;
-
-	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &processToken) == false) {
-		CloseHandle(processToken);
-		return false;
-	}
-
-	LUID privilegeID;
-
-	if (LookupPrivilegeValueW(NULL,SE_DEBUG_NAME, &privilegeID)==false) {
-		return false;
-	}
-
-	TOKEN_PRIVILEGES newPrivileges;
-	newPrivileges.PrivilegeCount = 1;
-	newPrivileges.Privileges[0].Luid = privilegeID;
-
-	if (AdjustTokenPrivileges(processToken,false,&newPrivileges,sizeof(TOKEN_PRIVILEGES),NULL,0)==false) {
-		cout << GetLastError();
-		return false;
-	}
-
-
-	return true;
-}
-
-/*
-LPCTSTR  newFILEbuffer = (LPTSTR)OpenFileMapping(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-
-if (newFILEbuffer == NULL)
-{
-return false;
-}
-*/
 
 int main() {
 
@@ -145,16 +112,9 @@ int main() {
 		string = string + wstring(newChar);
 	} while (Process32Next(hProcessSnap, &pe32));
 
+	//wcout << string.c_str();
+
 	if (write_in_page(newFILEbuffer, string.c_str()) == false) {
-		printf("Opperation failed %d", GetLastError());
-		UnmapViewOfFile(newFILEbuffer);
-		CloseHandle(createNewFile);
-		CloseHandle(hProcessSnap); 
-		return(-1);
-	}
-
-
-	if (createTREE(createNewFile)== false) {
 		printf("Opperation failed %d", GetLastError());
 		UnmapViewOfFile(newFILEbuffer);
 		CloseHandle(createNewFile);
@@ -164,7 +124,7 @@ int main() {
 
 	cout << "Successful opperation" << endl;
 
-	CloseHandle(createNewFile);
+	//CloseHandle(createNewFile);
 	UnmapViewOfFile(newFILEbuffer);
 	CloseHandle(hProcessSnap);
 	system("pause");
