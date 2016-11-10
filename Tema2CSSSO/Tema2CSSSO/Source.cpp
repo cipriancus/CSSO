@@ -23,7 +23,6 @@ boolean write_in_page(LPCTSTR  newFILEbuffer,const wchar_t* newChar) {
 		return true;
 }
 
-
 int main() {
 
 	HANDLE hProcessSnap;
@@ -111,8 +110,6 @@ int main() {
 		
 		string = string + wstring(newChar);
 	} while (Process32Next(hProcessSnap, &pe32));
-
-	//wcout << string.c_str();
 
 	if (write_in_page(newFILEbuffer, string.c_str()) == false) {
 		printf("Opperation failed %d", GetLastError());

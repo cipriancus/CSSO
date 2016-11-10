@@ -40,9 +40,6 @@ wstring searchPPID(WCHAR *token) {
 		if (foundPPID[iterator] == '>')
 			break;
 	}
-
-
-
 	return foundPPID.substr(1, iterator - 1);
 }
 
@@ -58,6 +55,8 @@ boolean isFIRSTprocess(wstring PPID, WCHAR *PAGE) {//returneaza daca procesul cu
 			return false;
 		token = wcstok(NULL, L"\n", &buffer);
 	}
+	
+	delete copyPAGE;
 	return true;
 }
 
@@ -72,6 +71,7 @@ wstring search(wstring PPID, TCHAR* PAGE, int tab) {
 	WCHAR *token = wcstok(PAGE, L"\n", &buffer);
 	while (token != NULL) {
 		if (searchPPID(token) == PPID && isFIRSTprocess(searchPPID(token), copyPAGE) == false&& searchPID(token) != searchPPID(token)) {//are procesul parinte egal si nu e parinte sau
+			
 			for (int iterator = 0; iterator < tab; iterator++)
 				output = output + L" ";
 
@@ -82,13 +82,15 @@ wstring search(wstring PPID, TCHAR* PAGE, int tab) {
 
 			output = output + search(searchPID(token), PAGEcopy, tab + 1);//trimit ce pid parinte sa caute
 			output = output + L"\n";
+			delete PAGEcopy;
 		}
 		token = wcstok(NULL, L"\n", &buffer);
 	}
+
+	delete copyPAGE;
 	return output;
 }
 
-//inchide handle-uri
 boolean createTREE() {
 	HANDLE createNewFile = OpenFileMapping(FILE_MAP_ALL_ACCESS, TRUE, L"PaginaNouaTema2");
 
@@ -137,9 +139,16 @@ boolean createTREE() {
 			output = output + search(searchPID(token), PAGEcopy, 1);//trimit ce pid parinte sa caute
 			allARBS.push_back(output);
 			fout << output.c_str() << endl;
+
+			free( PAGEcopy);
 		}
 		token = wcstok(NULL, L"\n", &buffer);
 	}
+
+	CloseHandle(createNewFile);
+	UnmapViewOfFile(newFILEbuffer);
+	free(newPAGEcopy);
+	fout.close();
 	return true;
 }
 
@@ -158,9 +167,9 @@ BOOL KillProcess(DWORD dwProcessId, UINT uExitCode)
 }
 
 boolean closeProcess(int arbNO) {
-	/*HANDLE processToken;
+	HANDLE processToken;
 
-	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &processToken) == false) {
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &processToken) == false) {
 		CloseHandle(processToken);
 		return false;
 	}
@@ -174,12 +183,13 @@ boolean closeProcess(int arbNO) {
 	TOKEN_PRIVILEGES newPrivileges;
 	newPrivileges.PrivilegeCount = 1;
 	newPrivileges.Privileges[0].Luid = privilegeID;
+	newPrivileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
 
 	if (AdjustTokenPrivileges(processToken, false, &newPrivileges, sizeof(TOKEN_PRIVILEGES), NULL, 0) == false) {
 		cout << GetLastError();
 		return false;
 	}
-	*/
+	
 
 
 	if (arbNO > allARBS.size() - 1)
@@ -191,18 +201,13 @@ boolean closeProcess(int arbNO) {
 
 	WCHAR *newARB=(WCHAR*)p;
 
-	WCHAR *buffer;
+	WCHAR *buffer;	
 	WCHAR *token = wcstok(newARB, L"\n", &buffer);
 	token = wcstok(NULL, L"\n", &buffer);
 	while (token != NULL) {
-		KillProcess(_wtol(searchPID(token).c_str()), 123);
-			//return false;
+		KillProcess(_wtol(searchPID(token).c_str()), 0);
 		token = wcstok(NULL, L"\n", &buffer);
 	}
-
-
-	//cout << KillProcess(arbNO, 123);
-
 }
 
 int main() {
@@ -212,7 +217,7 @@ int main() {
 		return(-1);
 	}
 
-	DWORD arbNO;
+	int arbNO;
 	cin >> arbNO;
 
 	if (closeProcess(arbNO) == false) {
