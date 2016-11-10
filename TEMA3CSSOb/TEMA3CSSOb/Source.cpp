@@ -12,7 +12,8 @@ using namespace std;
 
 #define FILESIZE 1000000
 
-HANDLE hMutex;
+HANDLE hEvent;
+HANDLE hEvent2;
 HANDLE createNewFile = NULL;
 
 void write_in_page(LPCTSTR  newFILEbuffer, const wchar_t* newChar) {
@@ -22,8 +23,10 @@ void write_in_page(LPCTSTR  newFILEbuffer, const wchar_t* newChar) {
 DWORD WINAPI proces1(LPVOID lpParam) {
 	wstring values = L"\n";
 
+	SetEvent(hEvent2);
+
 	for (int iterator = 0; iterator < 200; iterator++) {
-		WaitForSingleObject(hMutex, INFINITE);
+		WaitForSingleObject(hEvent2, INFINITE);
 
 		createNewFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, FILESIZE, L"PaginaNouaTema3");
 
@@ -31,7 +34,7 @@ DWORD WINAPI proces1(LPVOID lpParam) {
 		{
 			printf("Could not create file mapping object (%d).\n", GetLastError());
 			CloseHandle(createNewFile);
-			ReleaseMutex(hMutex);
+			ReleaseMutex(hEvent);
 			cout << GetLastError();
 			return (-1);
 		}
@@ -42,7 +45,7 @@ DWORD WINAPI proces1(LPVOID lpParam) {
 		{
 			printf("Could not map view of file (%d).\n", GetLastError());
 			CloseHandle(createNewFile);
-			ReleaseMutex(hMutex);
+			ReleaseMutex(hEvent);
 			UnmapViewOfFile(newFILEbuffer);
 			return (-1);
 		}
@@ -57,7 +60,8 @@ DWORD WINAPI proces1(LPVOID lpParam) {
 		values = values + to_wstring(a) + L"\n" + to_wstring(b) + L"\n";
 
 		write_in_page(newFILEbuffer, values.c_str());
-		ReleaseMutex(hMutex);
+		ResetEvent(hEvent2);
+		SetEvent(hEvent);
 	}
 	return 1;
 }
@@ -65,9 +69,7 @@ DWORD WINAPI proces1(LPVOID lpParam) {
 DWORD WINAPI proces2(LPVOID lpParam) {
 main_for:
 	for (int iterator = 0; iterator < 200; ) {
-		WaitForSingleObject(hMutex, INFINITE);
-
-		if (createNewFile != NULL) {
+		WaitForSingleObject(hEvent, INFINITE);
 
 			LPVOID  newFILEbuffer = MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 
@@ -75,7 +77,7 @@ main_for:
 			{
 				printf("Could not map view of file (%d).\n", GetLastError());
 				CloseHandle(createNewFile);
-				ReleaseMutex(hMutex);
+				ReleaseMutex(hEvent);
 				UnmapViewOfFile(newFILEbuffer);
 				goto main_for;
 			}
@@ -94,16 +96,9 @@ main_for:
 					//release mutex
 					cout << "Incorect la pasul ";
 					cout << iterator << endl;
-					ReleaseMutex(hMutex);
-					break;
+					iterator++;
+					goto main_for;
 				}
-				else {
-					cout << "Corect la pasul ";
-					cout << iterator << endl;
-					ReleaseMutex(hMutex);
-					break;
-				}
-
 				token = wcstok(NULL, L"\n", &buffer);//citesc in continuare
 			}
 
@@ -111,20 +106,22 @@ main_for:
 				UnmapViewOfFile(newFILEbuffer);
 				CloseHandle(createNewFile);
 			}
+			
+			cout << "Corect la pasul ";
+			cout << iterator << endl;
 
-			ReleaseMutex(hMutex);
+			SetEvent(hEvent2);
+			ResetEvent(hEvent);
 			iterator++;
-		}
-		else {
-			ReleaseMutex(hMutex);
-		}
 	}
 	return 1;
 }
 
 int main() {
-	//creare mutex
-	hMutex = CreateMutex(NULL, false, NULL);
+	//creare event
+	hEvent = CreateEvent(NULL,true,false, NULL);
+	hEvent2 = CreateEvent(NULL, true, false, NULL);
+
 
 	//crearea firului de executie care va scrie date
 	HANDLE hThread1 = CreateThread(NULL, NULL, proces1, NULL, NULL, NULL);
@@ -135,8 +132,8 @@ int main() {
 	WaitForSingleObject(hThread1, INFINITE);
 	WaitForSingleObject(hThread2, INFINITE);
 
-	//deinitializare obiect de tip mutex
-	CloseHandle(hMutex);
+	CloseHandle(hEvent);
+	CloseHandle(hEvent2);
 	system("pause");
 	return 0;
 }

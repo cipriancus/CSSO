@@ -94,16 +94,10 @@ DWORD WINAPI proces2(LPVOID lpParam) {
 					//release mutex
 					cout << "Incorect la pasul ";
 					cout << iterator << endl;
-					ReleaseMutex(hMutex);
-					break;
+					iterator++;
+					goto main_for;
 				}
-				else {
-					cout << "Corect la pasul ";
-					cout << iterator << endl;
-					ReleaseMutex(hMutex);
-					break;
-				}
-
+				
 				token = wcstok(NULL, L"\n", &buffer);//citesc in continuare
 			}
 
@@ -111,6 +105,9 @@ DWORD WINAPI proces2(LPVOID lpParam) {
 				UnmapViewOfFile(newFILEbuffer);
 				CloseHandle(createNewFile);
 			}
+
+			cout << "Corect la pasul ";
+			cout << iterator << endl;
 
 			ReleaseMutex(hMutex);
 			iterator++;
