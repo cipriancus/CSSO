@@ -17,47 +17,51 @@ HANDLE hEvent2;
 HANDLE createNewFile = NULL;
 
 void write_in_page(LPCTSTR  newFILEbuffer, const wchar_t* newChar) {
+	memset((PVOID)newFILEbuffer, NULL, FILESIZE);
 	CopyMemory((PVOID)newFILEbuffer, newChar, (lstrlenW(newChar)) * sizeof(wchar_t));
 }
 
 DWORD WINAPI proces1(LPVOID lpParam) {
-	wstring values = L"\n";
+	createNewFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, FILESIZE, L"PaginaNouaTema3");
+
+	if (createNewFile == NULL)
+	{
+		printf("Could not create file mapping object (%d).\n", GetLastError());
+		CloseHandle(createNewFile);
+		ReleaseMutex(hEvent);
+		cout << GetLastError();
+		return (-1);
+	}
+
+	LPCTSTR  newFILEbuffer = (LPTSTR)MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+
+	if (newFILEbuffer == NULL)
+	{
+		printf("Could not map view of file (%d).\n", GetLastError());
+		CloseHandle(createNewFile);
+		ReleaseMutex(hEvent);
+		UnmapViewOfFile(newFILEbuffer);
+		return (-1);
+	}
 
 	SetEvent(hEvent2);
 
-	for (int iterator = 0; iterator < 200; iterator++) {
+	for (int iterator = 0; iterator < 50; iterator++) {
 		WaitForSingleObject(hEvent2, INFINITE);
 
-		createNewFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, FILESIZE, L"PaginaNouaTema3");
-
-		if (createNewFile == NULL)
-		{
-			printf("Could not create file mapping object (%d).\n", GetLastError());
-			CloseHandle(createNewFile);
-			ReleaseMutex(hEvent);
-			cout << GetLastError();
-			return (-1);
-		}
-
-		LPCTSTR  newFILEbuffer = (LPTSTR)MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-
-		if (newFILEbuffer == NULL)
-		{
-			printf("Could not map view of file (%d).\n", GetLastError());
-			CloseHandle(createNewFile);
-			ReleaseMutex(hEvent);
-			UnmapViewOfFile(newFILEbuffer);
-			return (-1);
-		}
-
-		int a = rand();
+		int a = rand() % 200;
 
 		while (a == 0)
-			a = rand();
+			a = rand() % 200;
 
-		int b = 2 * a;
+		int b = rand() % 200;
 
-		values = values + to_wstring(a) + L"\n" + to_wstring(b) + L"\n";
+		while (b == 0)
+			b = rand() % 200;
+
+		cout << a << " " << b << endl;
+
+		wstring values = L"\n" + to_wstring(a) + L"\n" + to_wstring(b) + L"\n";
 
 		write_in_page(newFILEbuffer, values.c_str());
 		ResetEvent(hEvent2);
@@ -68,7 +72,7 @@ DWORD WINAPI proces1(LPVOID lpParam) {
 
 DWORD WINAPI proces2(LPVOID lpParam) {
 main_for:
-	for (int iterator = 0; iterator < 200; ) {
+	for (int iterator = 0; iterator < 50; ) {
 		WaitForSingleObject(hEvent, INFINITE);
 
 			LPVOID  newFILEbuffer = MapViewOfFile(createNewFile, FILE_MAP_ALL_ACCESS, 0, 0, 0);
@@ -95,10 +99,13 @@ main_for:
 				if (a * 2 != b) {
 					//release mutex
 					cout << "Incorect la pasul ";
-					cout << iterator << endl;
-					iterator++;
-					goto main_for;
+					cout << iterator << " " << a << " " << b << endl;
 				}
+				else {
+					cout << "Corect la pasul ";
+					cout << iterator << " " << a << " " << b << endl;
+				}
+
 				token = wcstok(NULL, L"\n", &buffer);//citesc in continuare
 			}
 
@@ -106,9 +113,6 @@ main_for:
 				UnmapViewOfFile(newFILEbuffer);
 				CloseHandle(createNewFile);
 			}
-			
-			cout << "Corect la pasul ";
-			cout << iterator << endl;
 
 			SetEvent(hEvent2);
 			ResetEvent(hEvent);
@@ -122,11 +126,22 @@ int main() {
 	hEvent = CreateEvent(NULL,true,false, NULL);
 	hEvent2 = CreateEvent(NULL, true, false, NULL);
 
+	if (hEvent == INVALID_HANDLE_VALUE || hEvent2 == INVALID_HANDLE_VALUE) {
+		cout << "Error at creating handle";
+			return (-1);
+	}
 
 	//crearea firului de executie care va scrie date
 	HANDLE hThread1 = CreateThread(NULL, NULL, proces1, NULL, NULL, NULL);
 	//creare firului de executie care va citi datele
 	HANDLE hThread2 = CreateThread(NULL, NULL, proces2, NULL, NULL, NULL);
+
+	if (hThread1 == INVALID_HANDLE_VALUE && hThread2 == INVALID_HANDLE_VALUE) {
+		cout << "Error at creating threads";
+		CloseHandle(hEvent);
+		CloseHandle(hEvent2);
+		return (-1);
+	}
 
 	//asteptam cele 2 fire de executie sa termine
 	WaitForSingleObject(hThread1, INFINITE);

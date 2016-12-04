@@ -1,0 +1,11 @@
+﻿  Source.cpp
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(53): warning C4018: '<': signed/unsigned mismatch
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(54): warning C4129: '/': unrecognized character escape sequence
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(80): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(157): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(162): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(169): warning C4800: 'BOOL': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(170): warning C4018: '<': signed/unsigned mismatch
+c:\users\ciprian\documents\github\csso\tema4csso\tema4csso\source.cpp(56): warning C4715: 'get_base_domain': not all control paths return a value
+  Tema4CSSO.vcxproj -> C:\Users\Ciprian\Documents\GitHub\CSSO\Tema4CSSO\Debug\Tema4CSSO.exe
+  Tema4CSSO.vcxproj -> C:\Users\Ciprian\Documents\GitHub\CSSO\Tema4CSSO\Debug\Tema4CSSO.pdb (Full PDB)
