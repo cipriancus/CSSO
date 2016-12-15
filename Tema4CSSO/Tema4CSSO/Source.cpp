@@ -16,7 +16,6 @@
 using namespace std;
 
 #pragma comment(lib,"Wininet")
-#define SERVER_ADDR L"ftp://localhost"
 
 string path = "C:\\Users\\Ciprian\\Downloads\\";
 
